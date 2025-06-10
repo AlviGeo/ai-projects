@@ -2,7 +2,7 @@ import streamlit as st
 import urllib.parse
 
 st.set_page_config(page_title="Mini Profession Quiz", layout="centered")
-st.audio("./assets/audio/background-music.mp3")
+st.audio("https://raw.githubusercontent.com/AlviGeo/ai-projects/master/fun-project_1_%20REAPYTHON1EKZGT/assets/audio/background-music.mp3")
 st.title("Which profession is right for you?")
 
 professions = {
