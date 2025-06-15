@@ -70,7 +70,7 @@ if submitted:
     else:
         best = max(destinations.items(), key=lambda x: x[1]["score"])
         st.subheader(f"🌏 Your Dream Destination Style: {best[0]}")
-        st.image(best[1]["image"], use_column_width=True)
+        st.image(best[1]["image"])
         st.write(best[1]["description"])
 
         # Share result
