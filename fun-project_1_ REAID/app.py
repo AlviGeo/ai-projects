@@ -1,85 +1,82 @@
 import streamlit as st
-import urllib.parse
 
-st.set_page_config(page_title="Mini Profession Quiz", layout="centered")
-st.audio("https://raw.githubusercontent.com/AlviGeo/ai-projects/master/fun-project_1_%20REAPYTHON1EKZGT/assets/audio/background-music.mp3")
-st.title("Which profession is right for you?")
+# Set page config
+st.set_page_config(page_title="Find Your Dream Travel Destination", page_icon="🌍", layout="centered")
+st.audio("https://raw.githubusercontent.com/AlviGeo/ai-projects/master/fun-project_1_%20REAID/assets/audio/background-music.mp3")
+st.title("💼 Find Your Dream Travel Destination")
 
-professions = {
-  "programmer": {
-    "title": "You are a true PROGRAMMER! 💻",
-    "desc": "Programmers are digital solution builders. They love creating software, crafting algorithms, and turning coffee into code. 🔧💡",
-    "gif": "https://media.giphy.com/media/qgQUggAC3Pfv687qPC/giphy.gif",
-    "note": "You're a true problem solver. The digital world needs more people like you! 🚀",
-  },
-  "designer": {
-    "title": "You are a creative DESIGNER! 🎨",
-    "desc": "Designers are visual visionaries. They know how to create harmony between aesthetics and function. From wireframe to masterpiece! ✨",
-    "gif": "https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExenc1b2Q1ZDhpbTBuMGQwOW95NjVsd2Uwamo4eXlxMndhYmpvbGN0MyZlcD12MV9naWZzX3NlYXJjaCZjdD1n/4tnhW4SZOPqmIf9Avt/giphy.gif",
-    "note": "Your imagination can make the world more beautiful and well-structured. 🌟",
-  },
-  "data_scientist": {
-    "title": "You are a modern DATA SCIENTIST! 📊",
-    "desc": "Data Scientists turn data into stories. They excel at analyzing, predicting, and supporting big decisions. 📈🔍",
-    "gif": "https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExOGgya3B2eGpwdnFtMWg4dmN5enY4djRyOXUwd2JlZjVza2dzMzRneCZlcD12MV9naWZzX3NlYXJjaCZjdD1n/xT5LMWNOjGqJzUfyve/giphy.gif",
-    "note": "You're like Sherlock Holmes, but with Python and datasets! 🧠",
-  },
+# Load assets
+destinations = {
+    "Beach Lover": {
+        "score": 0,
+        "image": "https://images.unsplash.com/photo-1507525428034-b723cf961d3e",
+        "description": "You love the sound of waves, sunshine, and relaxing on sandy beaches. Consider visiting Bali, Maldives, or Santorini."
+    },
+    "Nature Explorer": {
+        "score": 0,
+        "image": "https://images.unsplash.com/photo-1506744038136-46273834b3fb",
+        "description": "You find peace in mountains, forests, and waterfalls. Try places like New Zealand, Patagonia, or Banff."
+    },
+    "City Wanderer": {
+        "score": 0,
+        "image": "https://plus.unsplash.com/premium_photo-1681628908570-3c95bed77a8e?q=80&w=3764&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+        "description": "You love the energy of city life, street food, and museums. Explore Tokyo, New York, or Paris."
+    }
 }
 
-# List of Questions
-st.subheader("1. What is your favorite activity?")
-question_1 = st.radio(
-    "Choose one:",
-    ["Solving puzzles", "Creating art", "Analyzing data"]
-)
-st.subheader("2. What tools do you prefer to work with?")
-question_2 = st.radio(
-    "Choose one:",
-    ["VS Code", "Figma", "Google Colab"]
-)
-st.subheader("3. What motivates you the most?")
-question_3 = st.radio(
-    "Choose one:",
-    ["Keep calm and debug the code", "Design is thinking made visual", "In data we trust"]
-)
+# Title and description
+st.write("Answer the questions below and we'll match you with a destination you'll love!")
 
-# The result contents
-if st.button("View Results"):
-    scores = {
-        "programmer": 0,
-        "designer": 0,
-        "data_scientist": 0
+# Questions
+questions = [
+    {
+        "question": "What kind of scenery do you prefer?",
+        "options": {
+            "Beaches and oceans": "Beach Lover",
+            "Mountains and forests": "Nature Explorer",
+            "Skyscrapers and city lights": "City Wanderer"
+        }
+    },
+    {
+        "question": "What type of vacation do you enjoy?",
+        "options": {
+            "Relaxing and sunbathing": "Beach Lover",
+            "Hiking and exploring nature": "Nature Explorer",
+            "Shopping and trying new restaurants": "City Wanderer"
+        }
+    },
+    {
+        "question": "Your ideal weekend looks like...",
+        "options": {
+            "Lying on a beach with a good book": "Beach Lover",
+            "Camping or going on a trail": "Nature Explorer",
+            "Attending concerts or local events": "City Wanderer"
+        }
     }
-    if question_1 == "Solving puzzles":
-        scores["programmer"] += 1
-    elif question_1 == "Creating art":
-        scores["designer"] += 1
-    elif question_1 == "Analyzing data":
-        scores["data_scientist"] += 1
-    
-    if question_2 == "VS Code":
-        scores["programmer"] += 1
-    elif question_2 == "Figma":
-        scores["designer"] += 1
-    elif question_2 == "Google Colab":
-        scores["data_scientist"] += 1
-        
-    if question_3 == "Keep calm and debug the code":
-        scores["programmer"] += 1
-    elif question_3 == "Design is thinking made visual":
-        scores["designer"] += 1
-    elif question_3 == "In data we trust":
-        scores["data_scientist"] += 1
+]
 
-    profession = max(scores, key=scores.get)
-    st.write("### Your Results:")
-    st.success(professions[profession]["title"])
-    st.image(professions[profession]["gif"])
-    st.write(professions[profession]["note"])
-    st.balloons()
+# Form for questions
+with st.form("quiz_form"):
+    for i, q in enumerate(questions):
+        choice = st.radio(q["question"], list(q["options"].keys()), key=f"q{i}")
+        destinations[q["options"][choice]]["score"] += 1
+    submitted = st.form_submit_button("Find My Destination")
 
-    # --- Share Feature ---
-    share_text = f"I just discovered I'm a {profession.replace('_', ' ').title()}! Check yours at: https://yourapp.streamlit.app"
-    encoded = urllib.parse.quote(share_text)
-    x_url = f"https://x.com/intent/tweet?text={encoded}"
-    st.markdown(f"[📤 Share on X platform]({x_url})")
+# Result
+if submitted:
+    scores = [v["score"] for v in destinations.values()]
+    if scores.count(1) == 3:
+        st.warning("😕 We couldn't determine your dream destination style. Try answering more consistently!")
+    else:
+        best = max(destinations.items(), key=lambda x: x[1]["score"])
+        st.subheader(f"🌏 Your Dream Destination Style: {best[0]}")
+        st.image(best[1]["image"], use_column_width=True)
+        st.write(best[1]["description"])
+
+        # Share result
+        st.markdown("**Want to share your result?**")
+        share_url = f"https://x.com/intent/tweet?text=I+got+{best[0].replace(' ', '+')}+as+my+travel+style+on+this+fun+Streamlit+quiz!+Try+it+too!"
+        st.markdown(f"[Share on X]({share_url})")
+
+        st.success("Result generated successfully!")
+        st.balloons()
