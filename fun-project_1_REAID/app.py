@@ -2,7 +2,7 @@ import streamlit as st
 
 # Set page config
 st.set_page_config(page_title="Find Your Dream Travel Destination", page_icon="🌍", layout="centered")
-st.audio("https://raw.githubusercontent.com/AlviGeo/ai-projects/master/fun-project_1_%20REAID/assets/audio/background-music.mp3")
+st.audio("https://raw.githubusercontent.com/AlviGeo/ai-projects/master/fun-project_1_REAID/assets/audio/background-music.mp3")
 st.title("💼 Find Your Dream Travel Destination")
 
 # Load assets
