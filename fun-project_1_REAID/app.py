@@ -3,7 +3,38 @@ import streamlit as st
 # Set page config
 st.set_page_config(page_title="Find Your Dream Travel Destination", page_icon="🌍", layout="centered")
 st.audio("https://raw.githubusercontent.com/AlviGeo/ai-projects/master/fun-project_1_REAID/assets/audio/background-music.mp3")
+
+
+# Inject CSS to style the sidebar
+st.markdown("""
+    <style>
+    [data-testid="stSidebar"] {
+        background-color: #001f3f !important;  /* Navy Blue */
+        color: white !important;
+    }
+    [data-testid="stSidebar"] a {
+        color: #1abc9c !important;  /* Teal links */
+    }
+    [data-testid="stSidebar"] h1, 
+    [data-testid="stSidebar"] h2, 
+    [data-testid="stSidebar"] h3 {
+        color: white !important;
+    }
+    </style>
+""", unsafe_allow_html=True)
+
+# Sidebar content (always shown)
+with st.sidebar:
+    st.markdown("## ✨ About the Projects")
+    st.markdown("A fun and interactive web app built with Streamlit that helps you discover your ideal travel style.")
+    st.divider()
+    st.markdown("## 🔗 Connect with Me!")
+    st.markdown("- [GitHub](https://github.com/AlviGeo)")
+    st.markdown("- [LinkedIn](https://www.linkedin.com/in/alvigeovanny)")
+    st.markdown("- [Instagram](https://instagram.com/alvigeovanny)")
+
 st.title("💼 Find Your Dream Travel Destination")
+st.write("Answer the questions below and we'll match you with a destination you'll love!")
 
 # Load assets
 destinations = {
@@ -24,10 +55,7 @@ destinations = {
     }
 }
 
-# Title and description
-st.write("Answer the questions below and we'll match you with a destination you'll love!")
-
-# Questions
+# List Questions
 questions = [
     {
         "question": "What kind of scenery do you prefer?",
@@ -52,31 +80,66 @@ questions = [
             "Camping or going on a trail": "Nature Explorer",
             "Attending concerts or local events": "City Wanderer"
         }
+    },
+    {
+        "question": "What type of weather makes you happiest?",
+        "options": {
+            "Sunny and breezy": "Beach Lover",
+            "Cool and crisp": "Nature Explorer",
+            "Mild and ever-changing": "City Wanderer"
+        }
+    },
+    {
+        "question": "Which activity appeals to you most?",
+        "options": {
+            "Snorkeling or surfing": "Beach Lover",
+            "Climbing or wildlife watching": "Nature Explorer",
+            "Museum hopping or city walking tours": "City Wanderer"
+        }
+    },
+    {
+        "question": "What type of photos do you take most?",
+        "options": {
+            "Sunsets, waves, and beaches": "Beach Lover",
+            "Trees, mountains, and trails": "Nature Explorer",
+            "Architecture and cityscapes": "City Wanderer"
+        }
     }
 ]
 
-# Form for questions
+# Initialize scores in session state
+if "scores" not in st.session_state:
+    st.session_state.scores = {k: 0 for k in destinations.keys()}
+
+# Form for quiz
 with st.form("quiz_form"):
     for i, q in enumerate(questions):
         choice = st.radio(q["question"], list(q["options"].keys()), key=f"q{i}")
-        destinations[q["options"][choice]]["score"] += 1
+        selected_category = q["options"][choice]
+        st.session_state.scores[selected_category] += 1
     submitted = st.form_submit_button("Find My Destination")
 
-# Result
+# Show result section
 if submitted:
-    scores = [v["score"] for v in destinations.values()]
-    if scores.count(1) == 3:
-        st.warning("😕 We couldn't determine your dream destination style. Try answering more consistently!")
+    scores = st.session_state.scores
+    top_score = max(scores.values())
+    top_destinations = [k for k, v in scores.items() if v == top_score]
+
+    if len(top_destinations) > 1:
+        st.warning("😕 It's a tie! Try answering more consistently so we can better match your travel style.")
     else:
-        best = max(destinations.items(), key=lambda x: x[1]["score"])
-        st.subheader(f"🌏 Your Dream Destination Style: {best[0]}")
-        st.image(best[1]["image"])
-        st.write(best[1]["description"])
+        best = top_destinations[0]
+        st.subheader(f"🌏 Your Dream Destination Style: {best}")
+        st.image(destinations[best]["image"])
+        st.write(destinations[best]["description"])
 
         # Share result
         st.markdown("**Want to share your result?**")
-        share_url = f"https://x.com/intent/tweet?text=I+got+{best[0].replace(' ', '+')}+as+my+travel+style+on+this+fun+Streamlit+quiz!+Try+it+too!"
+        share_url = f"https://x.com/intent/tweet?text=I+got+{best.replace(' ', '+')}+as+my+travel+style+on+this+fun+Streamlit+quiz!+Try+it+too!"
         st.markdown(f"[Share on X]({share_url})")
 
         st.success("Result generated successfully!")
         st.balloons()
+
+    # Reset scores after submission 
+    st.session_state.scores = {k: 0 for k in scores.keys()}

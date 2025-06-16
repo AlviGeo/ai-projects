@@ -28,6 +28,7 @@ This is a **Mini Travel Style Quiz App** that helps match you with your dream de
 
 - 🎵 Background music for immersion
 - 🧠 Personality-style quiz with scoring
+- 🕹️ Sidenav Toggle
 - 🖼️ Beautiful Unsplash destination images
 - 📊 Personalized destination results
 - 💬 Custom descriptions for each result
