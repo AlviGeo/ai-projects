@@ -84,34 +84,31 @@ def clear_chat_history(username, room_id):
     conn.commit()
 
 def init_session():
-    query_params = st.experimental_get_query_params()
-    
-    if "logged_in" in query_params and query_params["logged_in"][0] == "1":
-        st.session_state.logged_in = True
-        st.session_state.username = query_params.get("username", [""])[0]
-    else:
+    # Login and auth state
+    if "logged_in" not in st.session_state:
         st.session_state.logged_in = False
+    if "username" not in st.session_state:
         st.session_state.username = ""
 
-    if "show_password" not in st.session_state:
-        st.session_state.show_password = False
-    if "api_key" not in st.session_state:
-        st.session_state.api_key = ""
-    if "theme" not in st.session_state:
-        st.session_state.theme = "Light"
-    if "current_model" not in st.session_state:
-        st.session_state.current_model = "mistralai/mistral-7b-instruct"
-    if "room_id" not in st.session_state:
-        st.session_state.room_id = None
-    if "room_name" not in st.session_state:
-        st.session_state.room_name = ""
-    if "uploaded_file" not in st.session_state:
-        st.session_state.uploaded_file = None
+    # App settings and UI state
+    defaults = {
+        "show_password": False,
+        "api_key": "",
+        "theme": "Light",
+        "current_model": "mistralai/mistral-7b-instruct",
+        "room_id": None,
+        "room_name": "",
+        "uploaded_file": None,
+    }
+
+    for key, value in defaults.items():
+        if key not in st.session_state:
+            st.session_state[key] = value
 
 def auth_form():
     st.title("🔐 Login or Register")
     auth_mode = st.radio("Choose mode", ["Login", "Register"])
-    username = st.text_input("Username", key="username_input")
+    username = st.text_input("Username", key="auth_username_input")
     password = st.text_input("Password", key="password_input", type="password" if not st.session_state.show_password else "default")
     
 
@@ -120,8 +117,6 @@ def auth_form():
             valid, msg = register_user(username, password)
             if valid:
                 st.success(msg + " Please login.")
-                st.session_state.username_input = ""
-                st.session_state.password_input = ""
             else:
                 st.error(msg)
     else:
@@ -196,7 +191,7 @@ def chatbot_ui():
             st.stop()
 
     # Ask for model selection if not already selected and no chat history
-    if not st.session_state.get("current_model") and not chat_history:
+    if not chat_history:
         model_options = {
             "Mistral 7B": "mistralai/mistral-7b-instruct",
             "Llama 2 70B": "meta-llama/llama-2-70b-chat",
