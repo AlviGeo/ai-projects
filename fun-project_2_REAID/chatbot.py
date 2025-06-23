@@ -30,7 +30,6 @@ c.execute('''CREATE TABLE IF NOT EXISTS chats (
 )''')
 conn.commit()
 
-# --- Helper Functions ---
 def register_user(username, password):
     if not username or not password:
         return False, "Username and password cannot be empty."
@@ -187,17 +186,29 @@ def chatbot_ui():
             st.warning("Enter your API key to start chatting.")
             st.stop()
 
-    # Ask for model selection if not already selected and no chat history
-    if not chat_history:
-        model_options = {
-            "Mistral 7B": "mistralai/mistral-7b-instruct",
-            "Llama 2 70B": "meta-llama/llama-2-70b-chat",
-            "GPT-3.5 Turbo": "openai/gpt-3.5-turbo",
-            "Mixtral 8x7B": "mistralai/mixtral-8x7b-instruct-v0.1"
-        }
-        model_name = st.selectbox("Choose a model", list(model_options.keys()), key="model_select")
-        st.session_state.current_model = model_options[model_name]
+    # Ask for model selection
+    model_options = {
+        "Mistral 7B": "mistralai/mistral-7b-instruct",
+        "Llama 2 70B": "meta-llama/llama-2-70b-chat",
+        "GPT-3.5 Turbo": "openai/gpt-3.5-turbo",
+        "Mixtral 8x7B": "mistralai/mixtral-8x7b-instruct-v0.1"
+    }
+    # 2. Set default model in session state if not already set
+    if "current_model" not in st.session_state:
+        st.session_state.current_model = model_options["Mistral 7B"]
 
+    # 3. Reverse lookup to get current model name
+    reverse_model_options = {v: k for k, v in model_options.items()}
+    current_model_name = reverse_model_options.get(st.session_state.current_model, "Mistral 7B")
+
+    # 4. Show dropdown and store result temporarily
+    model_name = st.selectbox("Choose a model", list(model_options.keys()), index=list(model_options.keys()).index(current_model_name))
+
+    # 5. If changed, update session state and force rerun
+    selected_model = model_options[model_name]
+    if st.session_state.current_model != selected_model:
+        st.session_state.current_model = selected_model
+        st.rerun()
     model = st.session_state.current_model
 
     # Chat bubbles
@@ -210,32 +221,32 @@ def chatbot_ui():
         
         # User bubble
         st.markdown(f"""
-        <div style='display:flex;align-items:flex-end;justify-content:flex-end;margin-bottom:2px;'>
-            <div style='background-color:#DCF8C6;border-radius:15px;padding:10px;margin:2px 0;max-width:70%;box-shadow:0 1px 2px rgba(0,0,0,0.1);'>
-                <div style='font-size:0.8em;color:#888;text-align:right;'>👩🏻‍💻 {formatted_ts}</div>
-                <div>{user_msg}</div>
+        <div style='display:flex;justify-content:flex-end;margin-bottom:6px;'>
+        <div style='background-color:#DCF8C6;border-radius:15px;padding:10px 15px;max-width:70%;box-shadow:0 1px 3px rgba(0,0,0,0.1);'>
+            <div style='font-size:0.75em;color:#666;text-align:right;'>👩🏻‍💻 {formatted_ts}</div>
+            <div style='font-size:1em;'>{user_msg}</div>
             </div>
         </div>
         """, unsafe_allow_html=True)
 
         # AI bubble
         st.markdown(f"""
-        <div style='display:flex;align-items:flex-end;justify-content:flex-start;margin-bottom:10px;'>
-            <div style='background-color:#F1F0F0;border-radius:15px;padding:10px;margin:2px 0;max-width:70%;box-shadow:0 1px 2px rgba(0,0,0,0.1);'>
-                <div style='font-size:0.8em;color:#888;'>🤖 {model.split('/')[0]} {formatted_ts}</div>
-                <div>{ai_msg}</div>
+        <div style='display:flex;justify-content:flex-start;margin-bottom:16px;'>
+        <div style='background-color:#F1F0F0;border-radius:15px;padding:10px 15px;max-width:70%;box-shadow:0 1px 3px rgba(0,0,0,0.1);'>
+            <div style='font-size:0.75em;color:#666;'>🧠 {model_name} &nbsp;•&nbsp; {formatted_ts}</div>
+            <div style='font-size:1em;'>{ai_msg}</div>
             </div>
         </div>
         """, unsafe_allow_html=True)
     st.markdown("</div>", unsafe_allow_html=True)
 
-    # Input and button row
-    prompt = st.chat_input("Type your message...", key="chat_input")
-    clear_clicked = st.button("Clear Room Chat", use_container_width=True, type="primary")
 
-    if clear_clicked:
-        clear_chat_history(st.session_state.username, st.session_state.room_id)
-        st.rerun()
+    prompt = st.chat_input("Type your message...")
+    if chat_history and any(msg[1].strip() for msg in chat_history):
+        clear_clicked = st.button("Clear Room Chat", use_container_width=True, type="primary")
+        if clear_clicked:
+            clear_chat_history(st.session_state.username, st.session_state.room_id)
+            st.rerun()
 
     # Handle sending the message
     if prompt and prompt.strip():
