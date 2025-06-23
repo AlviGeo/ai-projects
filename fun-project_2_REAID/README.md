@@ -7,7 +7,7 @@ A fully functional chatbot application built using **Streamlit** and powered by 
 ## ✨ Features
 
 - 🔐 **User Login/Register** system with persistent sessions
-- 🔑 **API Key input** with toggle visibility
+- 🔑 **API Key input** to chat with model
 - 🤖 **Multiple AI model support** (e.g. `gpt-3.5-turbo`, `mistral`, etc.)
 - 💬 **Real-time chat interface** with message history
 - 🗂️ **Room-based chat** (user-specific sessions)
@@ -48,7 +48,7 @@ streamlit run app.py
 
 1. Visit [https://openrouter.ai](https://openrouter.ai)
 2. Log in and generate your API key
-3. You can enter the API key directly in the app (under Settings), or store it in a `.env` file:
+3. You can enter the API key directly in the app
 
 ---
 
@@ -57,7 +57,7 @@ streamlit run app.py
 ```
 .
 ├── app.py                # Main Streamlit application
-├── chat.db               # SQLite database (auto-generated)
+├── chat_history.db               # SQLite database (auto-generated)
 ├── requirements.txt      # Python dependencies
 ├── README.md             # Project documentation
 └── images/               # Optional UI screenshots
@@ -71,7 +71,7 @@ streamlit run app.py
 
 | Login Page                          | Chat Interface                |
 | ----------------------------------- | ----------------------------- |
-| ![Login](images/register-login.png) | ![Chat](images/home-page.png) |
+| ![Login](images/register-login.png) | ![Chat](images/chat-page.png) |
 
 ---
 
@@ -102,13 +102,5 @@ MIT License. See `LICENSE` for details.
 
 - [Streamlit](https://streamlit.io/)
 - [OpenRouter.ai](https://openrouter.ai/)
-- [ChatGPT](https://chat.openai.com/) for UI/UX inspiration
 
 ---
-
-## 💬 Contact
-
-Built by **[Your Name]**
-
-- GitHub: [@AlviGeo](https://github.com/AlviGeo)
-- Email: alvigeovan29@gmail.com
