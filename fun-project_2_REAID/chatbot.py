@@ -189,7 +189,7 @@ def chatbot_ui():
     # Ask for model selection
     model_options = {
         "Mistral 7B": "mistralai/mistral-7b-instruct",
-        "Llama 2 70B": "meta-llama/llama-2-70b-chat",
+        "Llama 2 70B": "meta-llama/Llama-2-70b-chat-hf",
         "GPT-3.5 Turbo": "openai/gpt-3.5-turbo",
         "Mixtral 8x7B": "mistralai/mixtral-8x7b-instruct-v0.1"
     }
