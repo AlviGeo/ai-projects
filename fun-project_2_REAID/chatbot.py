@@ -98,7 +98,6 @@ def init_session():
         "current_model": "mistralai/mistral-7b-instruct",
         "room_id": None,
         "room_name": "",
-        "uploaded_file": None,
     }
 
     for key, value in defaults.items():
@@ -125,8 +124,7 @@ def auth_form():
             if valid:
                 st.session_state.logged_in = True
                 st.session_state.username = username
-                st.experimental_set_query_params(logged_in="1", username=username)
-                st.experimental_rerun()
+                st.rerun()
             else:
                 st.error(msg)
 
@@ -143,7 +141,7 @@ def sidebar():
             delete_room(st.session_state.room_id)
             st.session_state.room_id = None
             st.session_state.room_name = ""
-            st.experimental_rerun()
+            st.rerun()
     else:
         st.sidebar.info("No chat rooms. Create one!")
         st.session_state.room_id = None
@@ -159,7 +157,7 @@ def sidebar():
             room_id = create_room(st.session_state.username, new_room.strip())
             st.session_state.room_id = room_id
             st.session_state.room_name = new_room.strip()
-            st.experimental_rerun()
+            st.rerun()
     st.sidebar.markdown("---")
     if st.sidebar.button("Logout"):
         st.session_state.logged_in = False
@@ -167,8 +165,7 @@ def sidebar():
         st.session_state.api_key = ""
         st.session_state.room_id = None
         st.session_state.room_name = ""
-        st.experimental_set_query_params()
-        st.experimental_rerun()
+        st.rerun()
 
 def chatbot_ui():
     st.title(f"🤖 AI Chatbot - {st.session_state.room_name}")
@@ -185,7 +182,7 @@ def chatbot_ui():
                 st.warning("API key is too short. Please enter a valid OpenRouter API key.")
                 st.stop()
             st.session_state.api_key = api_key
-            st.experimental_rerun()
+            st.rerun()
         else:
             st.warning("Enter your API key to start chatting.")
             st.stop()
@@ -238,7 +235,7 @@ def chatbot_ui():
 
     if clear_clicked:
         clear_chat_history(st.session_state.username, st.session_state.room_id)
-        st.experimental_rerun()
+        st.rerun()
 
     # Handle sending the message
     if prompt and prompt.strip():
@@ -268,7 +265,7 @@ def chatbot_ui():
             except Exception as e:
                 ai_response = f"[Exception] {str(e)}"
         store_chat(st.session_state.username, st.session_state.room_id, model, prompt.strip(), ai_response)
-        st.experimental_rerun()
+        st.rerun()
 
 init_session()
 if st.session_state.get("logged_in"):
