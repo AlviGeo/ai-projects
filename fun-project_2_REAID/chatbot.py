@@ -17,7 +17,7 @@ c.execute('''CREATE TABLE IF NOT EXISTS users (
 c.execute('''CREATE TABLE IF NOT EXISTS chat_rooms (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     username TEXT NOT NULL,
-    room_name TEXT UNIQUE NOT NULL
+    room_name TEXT NOT NULL
 )''')
 c.execute('''CREATE TABLE IF NOT EXISTS chats (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -56,8 +56,8 @@ def create_room(username, room_name):
     conn.commit()
     return c.lastrowid
 
-def room_exists(room_name):
-    c.execute("SELECT 1 FROM chat_rooms WHERE room_name = ?", (room_name.strip(),))
+def room_exists(username, room_name):
+    c.execute("SELECT 1 FROM chat_rooms WHERE username = ? AND room_name = ?", (username, room_name.strip()))
     return c.fetchone() is not None
 
 def get_rooms(username):
@@ -150,8 +150,8 @@ def sidebar():
     if st.sidebar.button("Create Room"):
         if not new_room.strip():
             st.sidebar.error("Room name cannot be empty.")
-        elif room_exists(new_room):
-            st.sidebar.error("Room name already exists. Please choose another.")
+        elif room_exists(st.session_state.username, new_room):
+            st.sidebar.error("Room name already exists under your account. Choose another.")
         else:
             room_id = create_room(st.session_state.username, new_room.strip())
             st.session_state.room_id = room_id
@@ -189,9 +189,9 @@ def chatbot_ui():
     # Ask for model selection
     model_options = {
         "Mistral 7B": "mistralai/mistral-7b-instruct",
-        "Llama 2 70B": "meta-llama/Llama-2-70b-chat-hf",
+        "Llama 2 70B": "meta-llama/llama-3.3-70b-instruct",
         "GPT-3.5 Turbo": "openai/gpt-3.5-turbo",
-        "Mixtral 8x7B": "mistralai/mixtral-8x7b-instruct-v0.1"
+        "Mixtral 8x7B": "mistralai/mixtral-8x7b-instruct"
     }
     # 2. Set default model in session state if not already set
     if "current_model" not in st.session_state:
