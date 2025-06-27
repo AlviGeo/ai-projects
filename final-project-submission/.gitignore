@@ -1,0 +1,44 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual environment
+venv/
+
+# Streamlit cache and logs
+.streamlit/config.toml
+.streamlit/secrets.toml
+.streamlit/*.log
+
+# macOS
+.DS_Store
+
+# Python environment files
+*.egg-info/
+.eggs/
+*.egg
+pip-log.txt
+pip-delete-this-directory.txt
+
+# Test results
+htmlcov/
+.tox/
+.nox/
+coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+.hypothesis/
+
+# Local data or media files (optional - edit to fit your case)
+*.mp4
+*.avi
+*.mov
+*.mkv
+*.db
+*.sqlite3
+*.csv
+*.xlsx
+*.json
